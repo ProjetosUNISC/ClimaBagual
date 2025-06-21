@@ -27,16 +27,16 @@ public class CidadeService {
 
 
 
-        //declara a api que vai ser usada e como vai ser usada
+    /*    //declara a api que vai ser usada e como vai ser usada
       public CidadeService(String cidade) throws IOException, InterruptedException {
         this.cidade = cidade;
         this.url = String.format("https://geocoding-api.open-meteo.com/v1/search?name=%s&count=1", cidade);
       }
+*/
 
 
 
-
-      public void buscarESalvar() {
+      /*public void buscarESalvar() {
         double latitude = 0;
         double longitude = 0;
     
@@ -87,7 +87,7 @@ public class CidadeService {
             Logger.getLogger(CidadeService.class.getName()).log(Level.SEVERE, "Erro no banco de dados", e);
             JOptionPane.showMessageDialog(null, "Erro ao salvar no banco de dados.", "Erro SQL", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }*/
       public String getCidade() {
         return cidade;
       }
