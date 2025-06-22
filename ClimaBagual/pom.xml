@@ -41,4 +41,16 @@
         <maven.compiler.release>21</maven.compiler.release>
         <exec.mainClass>com.mycompany.climabagual.ClimaBagual</exec.mainClass>
     </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.json</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
 </project>

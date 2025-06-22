@@ -4,14 +4,11 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author ivansuptitz
- */
+
 public class Conexao {
 
     private final String driver = "com.mysql.cj.jdbc.Driver";
-    private final String url = "jdbc:mysql://localhost/" + "modelo_prova2";
+    private final String url = "jdbc:mysql://localhost/" + "banco_clima";
     private final String usuario = "root";
     private final String senha = "";//aqui no lab, "" (VAZIO)
     private Connection conexao;

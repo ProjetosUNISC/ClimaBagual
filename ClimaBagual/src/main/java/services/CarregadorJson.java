@@ -9,39 +9,35 @@ import model.Cidade;
 
 public class CarregadorJson {
 
-    public static class EstadosCidades {
-        
-            //guarda id e nome estado
-        private Map<String, String> estados;
-            //guarda cidade
-        private List<Cidade> cidades;
 
+
+    public static class EstadosCidades {
+            //guarda id e nome estado
+        private Map<String, String> states;
+            //guarda cidade
+        private List<Cidade> cities;
             //tranforma em dicionarios
-        public Map<String, String> getEstados() { 
-            return estados; }
-        
+        public Map<String, String> getStates() {
+            return states; }
             //transforma em lista
-        public List<Cidade> getCidades() { 
-            return cidades; }
+        public List<Cidade> getCities() {
+            return cities; }
     }
 
         //funcao para carregar estados
     public static List<Estado> carregarEstados() {
-        
-        
+
         List<Estado> lista = new ArrayList<>();
-        
             //faz a leitura do arquivo
         try (InputStream arquivo = CarregadorJson.class.getResourceAsStream("/estados-cidades.json");
              InputStreamReader leitura = new InputStreamReader(arquivo)) {
-
                 //usa a biblioteca gson para a leitura de json
             Gson gson = new Gson();
             EstadosCidades estadosCidades = gson.fromJson(leitura, EstadosCidades.class);
             
             
                 //loop para percorrer e preencher os estados
-            for (Map.Entry<String, String> entrada : estadosCidades.getEstados().entrySet()) {
+            for (Map.Entry<String, String> entrada : estadosCidades.getStates().entrySet()) {
                 int id = Integer.parseInt(entrada.getKey());
                 String nome = entrada.getValue();
                 lista.add(new Estado(id, nome));
@@ -52,6 +48,7 @@ public class CarregadorJson {
         return lista;
     }
 
+        //funcao para carregador cidade
     public static List<Cidade> carregarCidades() {
         
         try (InputStream arquivo = CarregadorJson.class.getResourceAsStream("/estados-cidades.json");
@@ -60,7 +57,7 @@ public class CarregadorJson {
             Gson gson = new Gson();
             EstadosCidades estadosCidades = gson.fromJson(leitura, EstadosCidades.class);
             
-            return estadosCidades.getCidades();
+            return estadosCidades.getCities();
         } catch (Exception e) {
             e.printStackTrace();
             

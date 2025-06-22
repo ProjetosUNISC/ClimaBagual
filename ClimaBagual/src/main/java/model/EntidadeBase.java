@@ -3,8 +3,8 @@ package model;
 
 public class EntidadeBase  {
     
-    private int id;
-    private String nome;
+    protected int id;
+    protected String nome;
 
     public int getId() {
         return id;
