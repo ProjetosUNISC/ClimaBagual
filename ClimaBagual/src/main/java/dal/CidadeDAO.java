@@ -10,7 +10,7 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade>{
     public CidadeDAO() {
         super(rs -> {
             Cidade c = new Cidade();
-            c.setId(rs.getInt("id"));   
+            c.setId(rs.getInt("id"));
             c.setNome(rs.getString("nome"));
             return c;
         });
