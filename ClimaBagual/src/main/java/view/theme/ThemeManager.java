@@ -1,8 +1,8 @@
-package main.java.view.theme;
+package view.theme;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import main.java.view.panel.GradientPanel;
+import view.panel.GradientPanel;
 
 import javax.swing.*;
 import java.awt.*;

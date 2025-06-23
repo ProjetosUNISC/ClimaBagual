@@ -1,11 +1,6 @@
-package view.icons;
-
-import dal.*;
-import model.*;
-import services.*;
+package view;
 
 import javax.swing.*;
-import java.util.List;
 
 public class Main {
 

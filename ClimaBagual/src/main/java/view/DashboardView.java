@@ -1,11 +1,11 @@
-package main.java.view;
+package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import main.java.services.cidades.ClockUpdater;
-import main.java.view.panel.GradientPanel;
-import main.java.view.panel.PanelFactory;
-import main.java.view.theme.ThemeManager;
-import main.java.view.panel.MenuFactory;
+import view.panel.GradientPanel;
+import view.panel.PanelFactory;
+import view.theme.ThemeManager;
+import view.panel.MenuFactory;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
