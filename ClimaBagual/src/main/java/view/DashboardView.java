@@ -11,9 +11,18 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import model.*;
+import services.*;
+import dal.*;
 
 
 public class DashboardView extends JFrame {
+
+
+    private JComboBox<Estado> comboEstado;
+    private JComboBox<Cidade> comboCidade;
+
     public JComboBox<String> comboLocalizacao;
     public JLabel rotuloDataHora;
     public JTextArea areaTempoAtual;
@@ -79,9 +88,20 @@ public class DashboardView extends JFrame {
 
 
         painelLocal.add(new JLabel("Localização:"));
-        String[] locais = {"Santa Cruz do Sul", "Porto Alegre", "São Paulo"};
-        comboLocalizacao = new JComboBox<>(locais);
-        painelLocal.add(comboLocalizacao);
+
+        //String[] locais = {"Santa Cruz do Sul", "Porto Alegre", "São Paulo"};
+        //comboLocalizacao = new JComboBox<>(locais);
+        //painelLocal.add(comboLocalizacao);
+
+        comboEstado = new JComboBox<>();
+        comboCidade = new JComboBox<>();
+
+        carregarEstados();
+        painelLocal.add(new JLabel("Estado:"));
+        painelLocal.add(comboEstado);
+        painelLocal.add(new JLabel("Cidade:"));
+        painelLocal.add(comboCidade);
+
         painelTopo.add(painelLocal, BorderLayout.WEST);
 
         rotuloDataHora = new JLabel();
@@ -136,6 +156,28 @@ public class DashboardView extends JFrame {
     private void acaoSobre() {
         JOptionPane.showMessageDialog(this, "ClimaBagual v1.0\nDesenvolvido por Sua Equipe", "Sobre", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private void carregarEstados(){
+
+        List<Estado> estados = new EstadoDAO().listarEstados();
+        for (Estado e : estados) {
+            comboEstado.addItem(e);
+        }
+
+
+        comboEstado.addActionListener(e -> {
+            Estado estadoSelecionado = (Estado) comboEstado.getSelectedItem();
+            if (estadoSelecionado != null) {
+                comboCidade.removeAllItems();
+                List<Cidade> cidades = new CidadeDAO().listarPorEstado(estadoSelecionado.getId());
+                for (Cidade c : cidades) {
+                    comboCidade.addItem(c);
+                }
+            }
+        });
+
+    }
+
 
     public static void main(String[] args) {
         ThemeManager.initTheme();

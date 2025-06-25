@@ -49,4 +49,8 @@ public class Conexao {
         return rs;
     }
 
+    public Connection getConexao() {
+        return conexao;
+    }
+
 }

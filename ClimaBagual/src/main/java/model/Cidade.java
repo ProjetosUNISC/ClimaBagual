@@ -15,6 +15,10 @@ public class Cidade extends EntidadeBase {
         this.state_id = state_id;
     }
 
+    @Override
+    public String toString() {
+        return getNome(); // isso que aparece no comboCidade
+    }
 
     @SerializedName("name")
     private String nome;

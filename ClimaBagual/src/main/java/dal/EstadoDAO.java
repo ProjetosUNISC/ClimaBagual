@@ -2,11 +2,16 @@ package dal;
 
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import model.*;
 
 
 public class EstadoDAO extends EntidadeBaseDAO<Estado>{
 
+
+        //construtor
     public EstadoDAO() {
         super(rs -> {
             Estado e = new Estado();
@@ -16,11 +21,14 @@ public class EstadoDAO extends EntidadeBaseDAO<Estado>{
         });
     }
 
+
+        //metodo implementado por causa do abstract
     @Override
     public String getNomeTabela() {
         return "estado"; // nome da tabela no banco
     }
 
+        //usado para inserir no banco de dados
     public void inserir(Estado e) {
         String sql = "INSERT INTO estado (id, nome) VALUES (?, ?)";
         try {
@@ -31,6 +39,24 @@ public class EstadoDAO extends EntidadeBaseDAO<Estado>{
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+        //usada para puxar estados do banco
+    public List<Estado> listarEstados() {
+        List<Estado> lista = new ArrayList<>();
+        String sql = "SELECT * FROM estado ORDER BY nome";
+
+        try (ResultSet rs = Conexao.getInstance().consultar(sql)) {
+            while (rs.next()) {
+                Estado e = new Estado();
+                e.setId(rs.getInt("id"));
+                e.setNome(rs.getString("nome"));
+                lista.add(e);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 
 }
