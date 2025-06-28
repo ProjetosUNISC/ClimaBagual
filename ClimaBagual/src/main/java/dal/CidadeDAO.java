@@ -40,29 +40,41 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade>{
     }
 
         //usada para puxar do banco para o front, se basea no id do estado
-        public List<Cidade> listarPorEstado(int idEstado) {
+    public List<Cidade> listarPorEstado(int idEstado) {
 
-            List<Cidade> lista = new ArrayList<>();
-            String sql = "SELECT * FROM cidade WHERE state_id = ? ORDER BY nome";
+        List<Cidade> lista = new ArrayList<>();
+        String sql = "SELECT * FROM cidade WHERE state_id = ? ORDER BY nome";
 
-            try {
-                PreparedStatement ps = Conexao.getInstance().getConexao().prepareStatement(sql);
-                ps.setInt(1, idEstado);
-                ResultSet rs = ps.executeQuery();
+        try {
+            PreparedStatement ps = Conexao.getInstance().getConexao().prepareStatement(sql);
+            ps.setInt(1, idEstado);
+            ResultSet rs = ps.executeQuery();
 
-                while (rs.next()) {
-                    Cidade c = new Cidade();
-                    c.setId(rs.getInt("id"));
-                    c.setNome(rs.getString("nome"));
-                    c.setState_id(rs.getInt("state_id"));
-                    lista.add(c);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            while (rs.next()) {
+                Cidade c = new Cidade();
+                c.setId(rs.getInt("id"));
+                c.setNome(rs.getString("nome"));
+                c.setState_id(rs.getInt("state_id"));
+                lista.add(c);
             }
-
-            return lista;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return lista;
+    }
+
+    public void atualizarCoordenadas(int idCidade, Coordenada coord) {
+        String sql = "UPDATE cidade SET latitude = ?, longitude = ? WHERE id = ?";
+        try (PreparedStatement ps = Conexao.getInstance().preparar(sql)) {
+            ps.setDouble(1, coord.getLatitude());
+            ps.setDouble(2, coord.getLongitude());
+            ps.setInt(3, idCidade);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

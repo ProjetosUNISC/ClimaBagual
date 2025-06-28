@@ -1,23 +1,65 @@
 package services;
 
+import com.google.gson.*;
+import model.Clima.*;
+
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
-
-
+import java.util.Locale;
 
 
 public class ClimaService {
-  public static void main(String[] args) throws Exception {
-      String url = "https://api.open-meteo.com/v1/forecast?latitude=-29.72&longitude=-52.43&hourly=temperature_2m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
+    public ClimaAtual buscarClimaAtual(double latitude, double longitude) {
 
-      HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+        try {
+            String url = "https://api.open-meteo.com/v1/forecast?latitude=" +
+                    String.format(Locale.US, "%.6f", latitude) +
+                    "&longitude=" +
+                    String.format(Locale.US, "%.6f", longitude) +
+                    "&current_weather=true";
 
-      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("User-Agent", "Java ClimaBagual")
+                    .build();
 
-      System.out.println("Resposta da API:");
-      System.out.println(response.body());
-  }
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
+
+            if (!json.has("current_weather")) {
+                System.out.println("❌ Não veio campo 'current_weather' na resposta");
+                return null;
+            }
+
+            JsonObject current = json.getAsJsonObject("current_weather");
+
+            double temperatura = current.get("temperature").getAsDouble();
+            double vento = current.get("windspeed").getAsDouble();
+            int codigo = current.get("weathercode").getAsInt();
+
+            return new ClimaAtual(temperatura, vento, interpretarCodigoClima(codigo));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String interpretarCodigoClima(int code) {
+        return switch (code) {
+            case 0 -> "Céu limpo";
+            case 1, 2, 3 -> "Parcialmente nublado";
+            case 45, 48 -> "Neblina";
+            case 51, 53, 55 -> "Garoa";
+            case 61, 63, 65 -> "Chuva";
+            case 71, 73, 75 -> "Neve";
+            case 80, 81, 82 -> "Chuva forte";
+            case 95, 96, 99 -> "Tempestade";
+            default -> "Desconhecido";
+        };
+    }
 }

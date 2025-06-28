@@ -2,6 +2,8 @@ package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import main.java.services.cidades.ClockUpdater;
+
+
 import view.panel.GradientPanel;
 import view.panel.PanelFactory;
 import view.theme.ThemeManager;
@@ -12,6 +14,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import model.Clima.*;
+import services.cidades.*;
 import model.*;
 import services.*;
 import dal.*;
@@ -89,6 +94,7 @@ public class DashboardView extends JFrame {
 
         painelLocal.add(new JLabel("Localização:"));
 
+        //parametros de teste para combo
         //String[] locais = {"Santa Cruz do Sul", "Porto Alegre", "São Paulo"};
         //comboLocalizacao = new JComboBox<>(locais);
         //painelLocal.add(comboLocalizacao);
@@ -142,6 +148,20 @@ public class DashboardView extends JFrame {
     }
 
     private void acaoAtualizarDados() {
+
+
+
+        Cidade cidade = (Cidade) comboCidade.getSelectedItem();
+        if (cidade != null) {
+            Coordenada coordenada = new CidadeService().buscarOuCarregarCoordenadas(cidade);
+            if (coordenada != null) {
+                ClimaAtual clima = new ClimaService().buscarClimaAtual(coordenada.getLatitude(), coordenada.getLongitude());
+                atualizarClimaAtual(clima);
+            }
+        }
+
+
+
         JOptionPane.showMessageDialog(this, "Dados atualizados.");
     }
 
@@ -158,13 +178,10 @@ public class DashboardView extends JFrame {
     }
 
     private void carregarEstados(){
-
         List<Estado> estados = new EstadoDAO().listarEstados();
         for (Estado e : estados) {
             comboEstado.addItem(e);
         }
-
-
         comboEstado.addActionListener(e -> {
             Estado estadoSelecionado = (Estado) comboEstado.getSelectedItem();
             if (estadoSelecionado != null) {
@@ -176,6 +193,21 @@ public class DashboardView extends JFrame {
             }
         });
 
+    }
+
+    public void atualizarClimaAtual(ClimaAtual clima) {
+        if (clima == null) {
+            areaTempoAtual.setText("Erro ao carregar dados do tempo.");
+            return;
+        }
+
+        String texto = String.format("""
+        Temperatura: %.1f°C
+        Vento: %.1f km/h
+        Condição: %s
+        """, clima.getTemperatura(), clima.getVento(), clima.getDescricao());
+
+        areaTempoAtual.setText(texto);
     }
 
 
