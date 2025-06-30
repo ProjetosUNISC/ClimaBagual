@@ -1,18 +1,16 @@
-package view;
+package main.java.view;
 
-import com.formdev.flatlaf.FlatLightLaf;
 import main.java.services.cidades.ClockUpdater;
 
 
+import model.Clima.IndiceUV;
+import view.PrevisaoHorasViewUpdater;
 import view.panel.GradientPanel;
 import view.panel.PanelFactory;
 import view.theme.ThemeManager;
 import view.panel.MenuFactory;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import model.Clima.*;
@@ -25,15 +23,18 @@ import dal.*;
 public class DashboardView extends JFrame {
 
 
-    private JComboBox<Estado> comboEstado;
-    private JComboBox<Cidade> comboCidade;
+    private JComboBox<model.Estado> comboEstado;
+    private JComboBox<model.Cidade> comboCidade;
 
     public JComboBox<String> comboLocalizacao;
     public JLabel rotuloDataHora;
     public JTextArea areaTempoAtual;
+
     public JTextArea areaPrevisaoHoras;
     public JTextArea areaPrevisaoDias;
     public JTextArea areaIndiceUV;  // Novo widget: Índice UV
+
+
 
     public DashboardView() {
         setTitle("Painel de Clima");
@@ -148,22 +149,36 @@ public class DashboardView extends JFrame {
     }
 
     private void acaoAtualizarDados() {
-
-
-
         Cidade cidade = (Cidade) comboCidade.getSelectedItem();
         if (cidade != null) {
             Coordenada coordenada = new CidadeService().buscarOuCarregarCoordenadas(cidade);
             if (coordenada != null) {
-                ClimaAtual clima = new ClimaService().buscarClimaAtual(coordenada.getLatitude(), coordenada.getLongitude());
+                double lat = coordenada.getLatitude();
+                double lon = coordenada.getLongitude();
+
+                // Atualiza o clima atual
+                ClimaAtual clima = new ClimaService().buscarClimaAtual(lat, lon);
                 atualizarClimaAtual(clima);
+
+                // Atualiza a previsão horária
+                List<ClimaHora> previsoesHoras = new ClimaServicesHourly().buscarPrevisaoHoraria(lat, lon);
+                PrevisaoHorasViewUpdater.atualizar(areaPrevisaoHoras, previsoesHoras);
+
+                // Atualiza a previsão diária
+                List<ClimaDia> previsoesDias = new ClimaDiarioService().buscarPrevisaoDiaria(lat, lon);
+                view.updater.PrevisaoDiasViewUpdater.atualizar(areaPrevisaoDias, previsoesDias);
+
+                // Atualiza o índice UV
+                List<IndiceUV> indices = new IndiceUVService().buscarIndiceUV(lat, lon);
+                view.updater.IndiceUVViewUpdater.atualizar(areaIndiceUV, indices);
             }
         }
 
-
-
         JOptionPane.showMessageDialog(this, "Dados atualizados.");
     }
+
+
+
 
     private void acaoHistorico() {
         JOptionPane.showMessageDialog(this, "Exibindo histórico.");
@@ -202,9 +217,9 @@ public class DashboardView extends JFrame {
         }
 
         String texto = String.format("""
-        Temperatura: %.1f°C
-        Vento: %.1f km/h
-        Condição: %s
+         Temperatura: 🌡️%.1f °C
+         Vento: 💨%.1f km/h
+         Condição: %s
         """, clima.getTemperatura(), clima.getVento(), clima.getDescricao());
 
         areaTempoAtual.setText(texto);

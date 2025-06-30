@@ -1,23 +1,27 @@
 package services;
 
 import com.google.gson.*;
-import model.Clima.ClimaAtual;
+import model.Clima.ClimaHora;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Locale;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-public class ClimaService {
+public class ClimaServicesHourly {
 
-    public ClimaAtual buscarClimaAtual(double latitude, double longitude) {
+    public List<ClimaHora> buscarPrevisaoHoraria(double latitude, double longitude) {
+        List<ClimaHora> previsoes = new ArrayList<>();
+
         try {
             String url = "https://api.open-meteo.com/v1/forecast?latitude=" +
                     String.format(Locale.US, "%.6f", latitude) +
                     "&longitude=" +
                     String.format(Locale.US, "%.6f", longitude) +
-                    "&current=temperature_2m,wind_speed_10m,weather_code&timezone=auto";
+                    "&hourly=temperature_2m,wind_speed_10m,weather_code&timezone=auto";
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -28,23 +32,33 @@ public class ClimaService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
-            JsonObject current = json.getAsJsonObject("current");
+            JsonObject hourly = json.getAsJsonObject("hourly");
 
-            if (current == null) {
-                System.err.println("❌ 'current' não encontrado na resposta.");
-                return null;
+            JsonArray times = hourly.getAsJsonArray("time");
+            JsonArray temperatures = hourly.getAsJsonArray("temperature_2m");
+            JsonArray winds = hourly.getAsJsonArray("wind_speed_10m");
+            JsonArray codes = hourly.getAsJsonArray("weather_code");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+
+            for (int i = 0; i < times.size(); i++) {
+                String timeStr = times.get(i).getAsString();
+                LocalDateTime hora = LocalDateTime.parse(timeStr, formatter);
+
+                double temp = temperatures.get(i).getAsDouble();
+                double vento = winds.get(i).getAsDouble();
+                int codigo = codes.get(i).getAsInt();
+
+                String descricao = interpretarCodigoClima(codigo);
+
+                previsoes.add(new ClimaHora(hora, temp, vento, descricao));
             }
-
-            double temperatura = current.get("temperature_2m").getAsDouble();
-            double vento = current.get("wind_speed_10m").getAsDouble();
-            int codigo = current.get("weather_code").getAsInt();
-
-            return new ClimaAtual(temperatura, vento, interpretarCodigoClima(codigo));
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+
+        return previsoes;
     }
 
     private String interpretarCodigoClima(int code) {
