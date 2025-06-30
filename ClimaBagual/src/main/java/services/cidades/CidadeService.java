@@ -1,21 +1,17 @@
 
 package services.cidades;
 
-import java.io.IOException;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -25,25 +21,32 @@ import model.*;
 public class CidadeService {
 
 
-    public Coordenada buscarCoordenadas(String nomeCidade) {
+    public Coordenada buscarCoordenadas(Cidade cidade) {
         try {
-            String cidadeEncoded = URLEncoder.encode(nomeCidade, StandardCharsets.UTF_8);
-            String url = "https://geocoding-api.open-meteo.com/v1/search?name=" + cidadeEncoded + "&count=1";
+            String nome = cidade.getNome();
+            String estado = cidade.getEstado().getSigla();
+            String appid = "6cc3e2044c7515ef224b7079e5cb8e0d"; // 🔑 substitui aqui pela chave que você copiou
+
+            String url = String.format(
+                    "http://api.openweathermap.org/geo/1.0/direct?q=%s,%s,BR&limit=1&appid=%s",
+                    URLEncoder.encode(nome, StandardCharsets.UTF_8),
+                    estado,
+                    appid
+            );
+
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("User-Agent", "Java ClimaApp")
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            JsonArray array = JsonParser.parseString(response.body()).getAsJsonArray();
 
-            JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
-
-            if (json.has("results")) {
-                JsonObject result = json.getAsJsonArray("results").get(0).getAsJsonObject();
-                double lat = result.get("latitude").getAsDouble();
-                double lon = result.get("longitude").getAsDouble();
+            if (!array.isEmpty()) {
+                JsonObject obj = array.get(0).getAsJsonObject();
+                double lat = obj.get("lat").getAsDouble();
+                double lon = obj.get("lon").getAsDouble();
                 return new Coordenada(lat, lon);
             }
 
@@ -53,15 +56,14 @@ public class CidadeService {
 
         return null;
     }
-
     public Coordenada buscarOuCarregarCoordenadas(Cidade cidade) {
         if (cidade.getLatitude() != 0 && cidade.getLongitude() != 0) {
             // Já tem dados no banco
             return new Coordenada(cidade.getLatitude(), cidade.getLongitude());
         }
 
-        // Não tem busca na API
-        Coordenada coordenada = buscarCoordenadas(cidade.getNome());
+
+        Coordenada coordenada = buscarCoordenadas(cidade);
 
         if (coordenada != null) {
             // Salva no banco

@@ -45,9 +45,11 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade>{
         List<Cidade> lista = new ArrayList<>();
         String sql = "SELECT * FROM cidade WHERE state_id = ? ORDER BY nome";
 
+
         try {
             PreparedStatement ps = Conexao.getInstance().getConexao().prepareStatement(sql);
             ps.setInt(1, idEstado);
+            Estado estado = new EstadoDAO().buscarPorId(idEstado);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -55,6 +57,8 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade>{
                 c.setId(rs.getInt("id"));
                 c.setNome(rs.getString("nome"));
                 c.setState_id(rs.getInt("state_id"));
+                c.setState_id(idEstado);
+                c.setEstado(estado);
                 lista.add(c);
             }
         } catch (SQLException e) {

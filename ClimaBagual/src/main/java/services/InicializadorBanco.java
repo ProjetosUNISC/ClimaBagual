@@ -29,6 +29,8 @@ public class InicializadorBanco {
             for (Cidade c : cidades) {
                 cidadeDAO.inserir(c);
             }
+
+            new AtualizadorSiglasEstadoDAO().atualizar();
             //JOptionPane.showMessageDialog(null,"Importação finalizada com sucesso.","Aviso",JOptionPane.INFORMATION_MESSAGE);
         } else {
             //JOptionPane.showMessageDialog(null,"Banco já completo.","Aviso",JOptionPane.INFORMATION_MESSAGE);

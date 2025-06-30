@@ -50,6 +50,7 @@ public class EstadoDAO extends EntidadeBaseDAO<Estado>{
                 Estado e = new Estado();
                 e.setId(rs.getInt("id"));
                 e.setNome(rs.getString("nome"));
+                e.setSigla(rs.getString("sigla"));
                 lista.add(e);
             }
         } catch (SQLException e) {
@@ -57,6 +58,26 @@ public class EstadoDAO extends EntidadeBaseDAO<Estado>{
         }
 
         return lista;
+    }
+
+    public Estado buscarPorId(int id) {
+        String sql = "SELECT * FROM estado WHERE id = ?";
+        try (PreparedStatement ps = Conexao.getInstance().preparar(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Estado e = new Estado();
+                e.setId(rs.getInt("id"));
+                e.setNome(rs.getString("nome"));
+                e.setSigla(rs.getString("sigla"));
+                return e;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

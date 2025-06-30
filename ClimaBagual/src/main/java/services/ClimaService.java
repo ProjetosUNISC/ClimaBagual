@@ -11,6 +11,8 @@ import java.util.Locale;
 
 
 public class ClimaService {
+
+
     public ClimaAtual buscarClimaAtual(double latitude, double longitude) {
 
         try {
@@ -26,12 +28,12 @@ public class ClimaService {
                     .header("User-Agent", "Java ClimaBagual")
                     .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
 
             if (!json.has("current_weather")) {
-                System.out.println("❌ Não veio campo 'current_weather' na resposta");
                 return null;
             }
 

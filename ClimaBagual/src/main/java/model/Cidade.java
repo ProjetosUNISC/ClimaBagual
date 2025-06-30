@@ -8,6 +8,8 @@ public class Cidade extends EntidadeBase {
     private int state_id;
     private double latitude;
     private double longitude;
+    private Estado estado;
+
 
 
 
@@ -24,10 +26,24 @@ public class Cidade extends EntidadeBase {
         return getNome(); // isso que aparece no comboCidade
     }
 
+    public String getNomeCompleto() {
+        if (estado != null) {
+            return nome + ", " + estado.getNome();
+        }
+        return nome;
+    }
+
     @SerializedName("name")
     private String nome;
 
     // getters e setters
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
 
     public double getLatitude() {
         return latitude;

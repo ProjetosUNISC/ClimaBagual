@@ -149,8 +149,6 @@ public class DashboardView extends JFrame {
 
     private void acaoAtualizarDados() {
 
-
-
         Cidade cidade = (Cidade) comboCidade.getSelectedItem();
         if (cidade != null) {
             Coordenada coordenada = new CidadeService().buscarOuCarregarCoordenadas(cidade);
@@ -178,7 +176,11 @@ public class DashboardView extends JFrame {
     }
 
     private void carregarEstados(){
+
+
         List<Estado> estados = new EstadoDAO().listarEstados();
+
+
         for (Estado e : estados) {
             comboEstado.addItem(e);
         }
@@ -197,7 +199,7 @@ public class DashboardView extends JFrame {
 
     public void atualizarClimaAtual(ClimaAtual clima) {
         if (clima == null) {
-            areaTempoAtual.setText("Erro ao carregar dados do tempo.");
+            areaTempoAtual.setText("Erro ao carregar tempo atual.");
             return;
         }
 
