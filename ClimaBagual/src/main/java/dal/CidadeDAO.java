@@ -1,17 +1,20 @@
 package dal;
 
-import dal.*;
+
 import model.*;
-import java.sql.*;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class CidadeDAO extends EntidadeBaseDAO<Cidade>{
+public class CidadeDAO extends main.java.dal.EntidadeBaseDAO<Cidade> {
 
     public CidadeDAO() {
         super(rs -> {
-            Cidade c = new Cidade();
+            Cidade c = new model.Cidade();
             c.setId(rs.getInt("id"));
             c.setNome(rs.getString("nome"));
             return c;

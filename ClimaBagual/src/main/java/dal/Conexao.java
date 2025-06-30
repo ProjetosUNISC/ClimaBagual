@@ -1,5 +1,4 @@
 package dal;
-
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,7 +7,8 @@ import java.util.logging.Logger;
 public class Conexao {
 
     private final String driver = "com.mysql.cj.jdbc.Driver";
-    private final String url = "jdbc:mysql://localhost/" + "banco_clima";
+    //private final String url = "jdbc:mysql://localhost/" + "banco_clima";
+    private final String url = "jdbc:mysql://localhost:3306/banco_clima?serverTimezone=UTC";
     private final String usuario = "root";
     private final String senha = "";//aqui no lab, "" (VAZIO)
     private Connection conexao;

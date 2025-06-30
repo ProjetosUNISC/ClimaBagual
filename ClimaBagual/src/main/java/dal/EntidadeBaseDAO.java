@@ -1,4 +1,4 @@
-package dal;
+package main.java.dal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import model.EntidadeBase;
 
 import java.sql.*;
 
-import model.*;
+import model.EntidadeBase;
 
 public abstract class EntidadeBaseDAO<T extends EntidadeBase> {
 
@@ -17,10 +17,10 @@ public abstract class EntidadeBaseDAO<T extends EntidadeBase> {
     //instancia as variaves
     public abstract String getNomeTabela();
 
-    private ConstruirObjeto<T> objeto;
+    private model.ConstruirObjeto<T> objeto;
 
 
-    public EntidadeBaseDAO(ConstruirObjeto<T> objeto) {
+    public EntidadeBaseDAO(model.ConstruirObjeto<T> objeto) {
         this.objeto = objeto;
     }
 
@@ -28,7 +28,7 @@ public abstract class EntidadeBaseDAO<T extends EntidadeBase> {
     public boolean estaVazio() {
         String sql = "SELECT COUNT(*) FROM " + getNomeTabela();
         try {
-            ResultSet rs = Conexao.getInstance().consultar(sql);
+            ResultSet rs = dal.Conexao.getInstance().consultar(sql);
             if (rs.next()) {
                 return rs.getInt(1) == 0;
             }
@@ -45,7 +45,7 @@ public abstract class EntidadeBaseDAO<T extends EntidadeBase> {
         String sql = "SELECT * FROM " + getNomeTabela() + " ORDER BY nome";
 
         try {
-            ResultSet rs = Conexao.getInstance().consultar(sql);
+            ResultSet rs = dal.Conexao.getInstance().consultar(sql);
             while (rs.next()) {
 
                 T objetoMontado = objeto.construir(rs);
