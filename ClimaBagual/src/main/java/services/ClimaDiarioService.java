@@ -1,6 +1,8 @@
 package services;
 
 import com.google.gson.*;
+import dal.ClimaDiaDAO;
+import model.Cidade;
 import model.Clima.ClimaDia;
 
 import java.net.URI;
@@ -9,7 +11,7 @@ import java.util.*;
 
 public class ClimaDiarioService {
 
-    public List<ClimaDia> buscarPrevisaoDiaria(double lat, double lon) {
+    public List<ClimaDia> buscarPrevisaoDiaria(double lat, double lon, Cidade cidade) {
         List<ClimaDia> dias = new ArrayList<>();
 
         try {
@@ -38,9 +40,11 @@ public class ClimaDiarioService {
             JsonArray por = daily.getAsJsonArray("sunset");
             JsonArray vento = daily.getAsJsonArray("wind_speed_10m_max");
 
+            ClimaDiaDAO dao = new ClimaDiaDAO();
+
             for (int i = 0; i < datas.size(); i++) {
                 int codigo = codigos.get(i).getAsInt();
-                dias.add(new ClimaDia(
+                ClimaDia dia = new ClimaDia(
                         datas.get(i).getAsString(),
                         codigo,
                         tempMax.get(i).getAsDouble(),
@@ -49,7 +53,11 @@ public class ClimaDiarioService {
                         por.get(i).getAsString().substring(11),
                         vento.get(i).getAsDouble(),
                         interpretarCodigoClima(codigo)
-                ));
+                );
+                dia.setCidade(cidade);
+                dao.inserir(dia); // <-- grava no banco
+
+                dias.add(dia); // também adiciona na lista de retorno
             }
 
         } catch (Exception e) {

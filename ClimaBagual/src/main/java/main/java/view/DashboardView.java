@@ -157,15 +157,15 @@ public class DashboardView extends JFrame {
                 double lon = coordenada.getLongitude();
 
                 // Atualiza o clima atual
-                ClimaAtual clima = new ClimaService().buscarClimaAtual(lat, lon);
+                ClimaAtual clima = new ClimaService().buscarClimaAtual(lat, lon, cidade);
                 atualizarClimaAtual(clima);
 
                 // Atualiza a previsão horária
-                List<ClimaHora> previsoesHoras = new ClimaServicesHourly().buscarPrevisaoHoraria(lat, lon);
+                List<ClimaHora> previsoesHoras = new ClimaServicesHourly().buscarPrevisaoHoraria(lat, lon, cidade);
                 PrevisaoHorasViewUpdater.atualizar(areaPrevisaoHoras, previsoesHoras);
 
                 // Atualiza a previsão diária
-                List<ClimaDia> previsoesDias = new ClimaDiarioService().buscarPrevisaoDiaria(lat, lon);
+                List<ClimaDia> previsoesDias = new ClimaDiarioService().buscarPrevisaoDiaria(lat, lon, cidade);
                 view.updater.PrevisaoDiasViewUpdater.atualizar(areaPrevisaoDias, previsoesDias);
 
                 // Atualiza o índice UV
@@ -217,10 +217,18 @@ public class DashboardView extends JFrame {
         }
 
         String texto = String.format("""
-         Temperatura: 🌡️%.1f °C
-         Vento: 💨%.1f km/h
-         Condição: %s
-        """, clima.getTemperatura(), clima.getVento(), clima.getDescricao());
+             Temperatura: 🌡️ %.1f °C
+             Vento: 💨 %.1f km/h
+             Umidade: 💧 %d%%
+             Precipitação: 🌧 %.1f mm
+             Índice UV: 🔆 %.1f
+             Condição: %s
+            """, clima.getTemperatura(),
+                clima.getVento(),
+                clima.getUmidade(),
+                clima.getPrecipitacao(),
+                clima.getIndiceUV(),
+                clima.getDescricao());
 
         areaTempoAtual.setText(texto);
     }

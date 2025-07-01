@@ -25,7 +25,7 @@ public class PrevisaoHorasViewUpdater {
             ClimaHora hora = previsoes.get(i);
             sb.append(String.format(
                     "%s - %.1f °C, %.1f km/h, %s\n",
-                    hora.getHora().toLocalTime().toString(),
+                    hora.getDataHora().toLocalTime().toString(),
                     hora.getTemperatura(),
                     hora.getVento(),
                     hora.getDescricao()

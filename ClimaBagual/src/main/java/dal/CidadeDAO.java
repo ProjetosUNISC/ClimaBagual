@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CidadeDAO extends main.java.dal.EntidadeBaseDAO<Cidade> {
+public class CidadeDAO extends EntidadeBaseDAO<Cidade> {
 
     public CidadeDAO() {
         super(rs -> {

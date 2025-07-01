@@ -8,7 +8,7 @@ import java.util.List;
 import model.*;
 
 
-public class EstadoDAO extends main.java.dal.EntidadeBaseDAO<Estado> {
+public class EstadoDAO extends EntidadeBaseDAO<Estado> {
 
 
         //construtor

@@ -1,7 +1,10 @@
 package services;
 
 import com.google.gson.*;
+import dal.*;
+import model.Clima.ClimaDia;
 import model.Clima.ClimaHora;
+import model.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,15 +16,17 @@ import java.util.*;
 
 public class ClimaServicesHourly {
 
-    public List<ClimaHora> buscarPrevisaoHoraria(double latitude, double longitude) {
+    public List<ClimaHora> buscarPrevisaoHoraria(double lat, double lon, Cidade cidade) {
+
         List<ClimaHora> previsoes = new ArrayList<>();
 
         try {
             String url = "https://api.open-meteo.com/v1/forecast?latitude=" +
-                    String.format(Locale.US, "%.6f", latitude) +
+                    String.format(Locale.US, "%.6f", lat) +
                     "&longitude=" +
-                    String.format(Locale.US, "%.6f", longitude) +
+                    String.format(Locale.US, "%.6f", lon) +
                     "&hourly=temperature_2m,wind_speed_10m,weather_code&timezone=auto";
+
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -40,6 +45,7 @@ public class ClimaServicesHourly {
             JsonArray codes = hourly.getAsJsonArray("weather_code");
 
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            ClimaHoraDAO dao = new ClimaHoraDAO();
 
             for (int i = 0; i < times.size(); i++) {
                 String timeStr = times.get(i).getAsString();
@@ -51,7 +57,11 @@ public class ClimaServicesHourly {
 
                 String descricao = interpretarCodigoClima(codigo);
 
-                previsoes.add(new ClimaHora(hora, temp, vento, descricao));
+                ClimaHora climaHora = new ClimaHora(hora, temp, vento, descricao);
+                climaHora.setCidade(cidade);
+
+                dao.inserir(climaHora); // <-- grava no banco
+                previsoes.add(climaHora);
             }
 
         } catch (Exception e) {

@@ -1,10 +1,11 @@
-package main.java.dal;
+package dal;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dal.*;
 import model.EntidadeBase;
 
 import java.sql.*;
@@ -20,6 +21,9 @@ public abstract class EntidadeBaseDAO<T extends EntidadeBase> {
     private model.ConstruirObjeto<T> objeto;
 
 
+    public EntidadeBaseDAO() {
+
+    }
     public EntidadeBaseDAO(model.ConstruirObjeto<T> objeto) {
         this.objeto = objeto;
     }
@@ -56,6 +60,10 @@ public abstract class EntidadeBaseDAO<T extends EntidadeBase> {
         }
 
         return lista;
+    }
+
+    protected Connection getConexao() {
+        return Conexao.getInstance().getConexao();
     }
 
 
