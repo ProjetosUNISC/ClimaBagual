@@ -149,6 +149,7 @@ public class DashboardView extends JFrame {
     }
 
     private void acaoAtualizarDados() {
+
         Cidade cidade = (Cidade) comboCidade.getSelectedItem();
         if (cidade != null) {
             Coordenada coordenada = new CidadeService().buscarOuCarregarCoordenadas(cidade);
@@ -181,11 +182,64 @@ public class DashboardView extends JFrame {
 
 
     private void acaoHistorico() {
-        JOptionPane.showMessageDialog(this, "Exibindo histórico.");
-    }
+        // Obtendo a cidade selecionada no combo
+        Cidade cidadeSelecionada = (Cidade) comboCidade.getSelectedItem();
 
+        // Verifique se a cidade foi selecionada
+        if (cidadeSelecionada != null) {
+            // Buscar o histórico da cidade através do HistoricoDAO
+            List<ClimaAtual> historico = HistoricoDAO.buscarHistorico(cidadeSelecionada);
+
+            if (historico != null && !historico.isEmpty()) {
+                // Exibindo o histórico em uma área de texto
+                StringBuilder historicoTexto = new StringBuilder("Histórico de Clima:\n");
+                for (ClimaAtual clima : historico) {
+                    historicoTexto.append(String.format("Temperatura: %.1f°C\nVento: %.1f km/h\nDescrição: %s\n\n",
+                            clima.getTemperatura(), clima.getVento(), clima.getDescricao()));
+                }
+
+                // Atualizando o JTextArea com os dados do histórico
+                areaTempoAtual.setText(historicoTexto.toString());
+            } else {
+                JOptionPane.showMessageDialog(this, "Nenhum histórico encontrado para a cidade selecionada.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione uma cidade para exibir o histórico.");
+        }
+    }
     private void acaoPreferencias() {
-        JOptionPane.showMessageDialog(this, "Abrindo preferências.");
+        // Criando uma nova janela para preferências
+        JDialog dialog = new JDialog(this, "Preferências", true);
+        dialog.setLayout(new FlowLayout());
+
+        // Criando o combo box com as opções de tamanho
+        String[] opcoesTamanho = {"Padrão (Atual)", "1280x720", "Tela Cheia"};
+        JComboBox<String> comboTamanho = new JComboBox<>(opcoesTamanho);
+
+        // Botão para aplicar a escolha
+        JButton btnAplicar = new JButton("Aplicar");
+        btnAplicar.addActionListener(e -> {
+            String selecionado = (String) comboTamanho.getSelectedItem();
+            switch (selecionado) {
+                case "1280x720":
+                    setSize(1280, 720);
+                    break;
+                case "Tela Cheia":
+                    setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    break;
+                default:
+                    setSize(900, 600);
+                    setLocationRelativeTo(null);
+                    break;
+            }
+            dialog.dispose(); // Fechar a janela de preferências
+        });
+
+        dialog.add(comboTamanho);
+        dialog.add(btnAplicar);
+        dialog.setSize(300, 150);
+        dialog.setLocationRelativeTo(this); // Centralizar na tela principal
+        dialog.setVisible(true);
     }
 
     private void acaoSobre() {
