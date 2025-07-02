@@ -10,6 +10,7 @@ import view.panel.PanelFactory;
 import view.theme.ThemeManager;
 import view.panel.MenuFactory;
 import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.util.List;
 
@@ -178,9 +179,6 @@ public class DashboardView extends JFrame {
         JOptionPane.showMessageDialog(this, "Dados atualizados.");
     }
 
-
-
-
     private void acaoHistorico() {
         // Obtendo a cidade selecionada no combo
         Cidade cidadeSelecionada = (Cidade) comboCidade.getSelectedItem();
@@ -191,15 +189,34 @@ public class DashboardView extends JFrame {
             List<ClimaAtual> historico = HistoricoDAO.buscarHistorico(cidadeSelecionada);
 
             if (historico != null && !historico.isEmpty()) {
-                // Exibindo o histórico em uma área de texto
+                // Criando uma nova janela (JDialog) para exibir o histórico
+                JDialog dialog = new JDialog(this, "Histórico de Clima", true);
+                dialog.setLayout(new BorderLayout());
+
+                // Criando o texto do histórico
                 StringBuilder historicoTexto = new StringBuilder("Histórico de Clima:\n");
                 for (ClimaAtual clima : historico) {
-                    historicoTexto.append(String.format("Temperatura: %.1f°C\nVento: %.1f km/h\nDescrição: %s\n\n",
-                            clima.getTemperatura(), clima.getVento(), clima.getDescricao()));
+                    // Formatando a data antes de exibir
+                    String dataFormatada = clima.getDataHora();  // Obtendo a data (sem a hora)
+                    historicoTexto.append(String.format("\nData: %s\nTemperatura: %.1f°C\nVento: %.1f km/h\nDescrição: %s\n",
+                            dataFormatada, clima.getTemperatura(), clima.getVento(), clima.getDescricao()));
                 }
 
-                // Atualizando o JTextArea com os dados do histórico
-                areaTempoAtual.setText(historicoTexto.toString());
+                // Criando um JTextArea para exibir o histórico com texto não editável
+                JTextArea areaHistorico = new JTextArea(historicoTexto.toString());
+                areaHistorico.setEditable(false); // Não permite edição
+                areaHistorico.setCaretPosition(0); // Faz a rolagem começar do topo
+                areaHistorico.setLineWrap(true);  // Quebra linha automaticamente
+                areaHistorico.setWrapStyleWord(true); // Quebra linha de forma mais limpa
+
+                // Colocando o JTextArea em um JScrollPane para permitir a rolagem
+                JScrollPane scrollPane = new JScrollPane(areaHistorico);
+                dialog.add(scrollPane, BorderLayout.CENTER);
+
+                // Configurações da janela pop-up
+                dialog.setSize(400, 300);  // Tamanho da janela
+                dialog.setLocationRelativeTo(this);  // Centraliza na tela
+                dialog.setVisible(true);  // Exibe a janela
             } else {
                 JOptionPane.showMessageDialog(this, "Nenhum histórico encontrado para a cidade selecionada.");
             }
@@ -207,6 +224,10 @@ public class DashboardView extends JFrame {
             JOptionPane.showMessageDialog(this, "Selecione uma cidade para exibir o histórico.");
         }
     }
+
+
+
+
     private void acaoPreferencias() {
         // Criando uma nova janela para preferências
         JDialog dialog = new JDialog(this, "Preferências", true);

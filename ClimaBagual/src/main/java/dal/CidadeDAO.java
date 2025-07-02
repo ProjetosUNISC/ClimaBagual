@@ -1,6 +1,5 @@
 package dal;
 
-
 import model.*;
 
 import java.sql.PreparedStatement;
@@ -8,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CidadeDAO extends EntidadeBaseDAO<Cidade> {
 
@@ -21,14 +19,12 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade> {
         });
     }
 
-
     @Override
     public String getNomeTabela() {
         return "cidade";
     }
 
-
-        //usada para inserir cidade do json no banco
+    // Usada para inserir cidade do JSON no banco
     public void inserir(Cidade c) {
         String sql = "INSERT INTO cidade (id, nome, state_id) VALUES (?, ?, ?)";
         try {
@@ -42,14 +38,15 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade> {
         }
     }
 
-        //usada para puxar do banco para o front, se basea no id do estado
+    // Usada para puxar do banco para o front, se baseia no id do estado
     public List<Cidade> listarPorEstado(int idEstado) {
-
         List<Cidade> lista = new ArrayList<>();
         String sql = "SELECT * FROM cidade WHERE state_id = ? ORDER BY nome";
 
-
         try {
+            // Verifica se a conexão está aberta antes de usá-la
+            Conexao.getInstance().verificarConexao();
+
             PreparedStatement ps = Conexao.getInstance().getConexao().prepareStatement(sql);
             ps.setInt(1, idEstado);
             Estado estado = new EstadoDAO().buscarPorId(idEstado);
@@ -82,6 +79,4 @@ public class CidadeDAO extends EntidadeBaseDAO<Cidade> {
             e.printStackTrace();
         }
     }
-
-
 }

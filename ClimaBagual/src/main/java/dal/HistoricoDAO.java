@@ -35,7 +35,7 @@ public class HistoricoDAO {
     private static List<ClimaAtual> buscarHistoricoDoBanco(Cidade cidade) {
         List<ClimaAtual> historico = new ArrayList<>();
 
-        String sql = "SELECT temperatura, velocidade_vento, descricao FROM clima_atual WHERE cidade_id = ? ORDER BY data_hora DESC";
+        String sql = "SELECT temperatura, velocidade_vento, descricao, data_hora FROM clima_atual WHERE cidade_id = ? ORDER BY data_hora DESC";
 
         try (Connection conn = Conexao.getInstance().getConexao();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -52,7 +52,8 @@ public class HistoricoDAO {
                 ClimaAtual clima = new ClimaAtual(
                         rs.getDouble("temperatura"),
                         rs.getDouble("velocidade_vento"),
-                        rs.getString("descricao")
+                        rs.getString("descricao"),
+                        rs.getString("data_hora") // A data é mantida como String
                 );
 
                 // Adiciona o objeto ClimaAtual à lista de histórico

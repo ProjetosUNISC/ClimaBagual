@@ -2,6 +2,8 @@ package model.Clima;
 
 import model.*;
 
+import java.time.LocalDateTime;
+
 public class ClimaAtual extends EntidadeBase {
 
     private double temperatura;
@@ -11,6 +13,7 @@ public class ClimaAtual extends EntidadeBase {
     private double indiceUV;
     private double precipitacao;
     private Cidade cidade;
+    private String dataHora;
 
     public ClimaAtual() {
 
@@ -22,7 +25,20 @@ public class ClimaAtual extends EntidadeBase {
         this.descricao = descricao;
     }
 
+    public ClimaAtual(double temperatura, double vento, String descricao, String hora) {
+        this.temperatura = temperatura;
+        this.vento = vento;
+        this.descricao = descricao;
+        this.dataHora = hora;
+    }
 
+    public String getDataHora() {
+        return dataHora;
+    }
+
+    public void setDataHora(String dataHora) {
+        this.dataHora = dataHora;
+    }
 
     public double getTemperatura() {
         return temperatura;
