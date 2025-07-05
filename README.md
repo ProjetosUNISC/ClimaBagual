@@ -37,12 +37,10 @@ ClimaBagual/
 ## 🧪 Como Rodar
 1. **Clone o repositório:**
 
-git clone https://github.com/seu-usuario/java-climatempo.git
-
-cd java-climatempo
+git clone https://github.com/ProjetosUNISC/ClimaBagual
 
 Importe os scripts SQL para seu MySQL:
- banco_clima_estado.sql
+banco_clima_estado.sql
 banco_clima_cidade.sql
 banco_clima_clima_atual.sql
 banco_clima_clima_dia.sql
